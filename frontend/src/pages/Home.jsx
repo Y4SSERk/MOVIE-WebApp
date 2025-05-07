@@ -26,9 +26,24 @@ function Home() {
         loadPopularMovies();
     }, []);
 
-    const handleSearch = (e) => {
+    const handleSearch = async (e) => {
         e.preventDefault();
-        alert("Search for: " + searchQuery);
+        if (!searchQuery.trim()) return;
+        if (loading) return;
+
+        setLoading(true);
+        try {
+            const searchResults = await searchMovies(searchQuery);
+            setMovies(searchResults);
+            setError(null);
+        } catch (error) {
+            console.error("Failed to fetch search results", error);
+            setError("Failed to fetch search results");
+        }   
+        finally {
+            setLoading(false);
+        }
+
     }
 
     return <div className="home">
